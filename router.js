@@ -34,15 +34,7 @@ router.get('/students', function(req, res){
 
 
 router.get('/students/new', function(req, res){
-  Student.updateById({
-    id:1,
-    name: 'LA',
-    age:55
-  },function(err){
-    if(err){
-      return console.log ('fail')
-    }console.log('success')
-  })
+ 
   res.render('new.html')
 
 })
@@ -50,20 +42,20 @@ router.get('/students/new', function(req, res){
 
 router.post('/students/new', function(req, res){
   // console.log(req.body)
-  var student = req.body
-  Student.save(student, function(err) {
+  new Student(req.body).save(function(err){
     if(err){
-      res.status(500).send('server error')
+      return res.status(500).send('server error')
     }
     res.redirect('/students')
   })
+  
 })
 
 
 router.get('/students/edit', function(req, res){
   
 
-  Student.findById(parseInt(req.query.id), function(err, student){
+  Student.findById(req.query.id, function(err, student){
     if (err) {
       return res.status(500).send('server error')
     }
@@ -74,21 +66,21 @@ router.get('/students/edit', function(req, res){
 
 })
 router.post('/students/edit', function(req, res){
-  Student.updateById(req.body, function (err) {
+  Student.findByIdAndUpdate(req.body.id, req.body,function (err) {
     if(err){
       return res.status(500).send('server error')
 
     }
+    
     res.redirect('/students')
   })
 })
 
 
 router.get('/students/delete', function(req, res){
-  Student.deleteById(req.query.id, function (err) {
+  Student.deleteOne({_id:req.query.id}, function (err) {
     if(err){
       return res.status(500).send('server error')
-
     }
     res.redirect('/students')
   })
